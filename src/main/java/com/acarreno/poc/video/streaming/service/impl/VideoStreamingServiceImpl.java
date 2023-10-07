@@ -7,8 +7,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import com.acarreno.poc.video.streaming.mapper.VideoStreamingMapper;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
+import com.acarreno.poc.video.streaming.model.ActionType;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
+import com.acarreno.poc.video.streaming.model.StatisticDTO;
 import com.acarreno.poc.video.streaming.model.StatusVideoType;
 import com.acarreno.poc.video.streaming.persistence.ActionRepository;
 import com.acarreno.poc.video.streaming.persistence.MetadataRepository;
@@ -129,6 +131,17 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
     ActionEntity entity = mapper.actionDTOToActionEntity(action);
     entity = actionRepository.save(entity);
     return ResponseDTO.builder().id(entity.getIdAction().toString()).build();
+  }
+
+  @Override
+  public StatisticDTO getStatisticByVideo(UUID idVideo) {
+
+    StatisticDTO statistic = StatisticDTO.builder()
+        .comments(actionRepository.countAction(ActionType.COMMENTED.name(), idVideo))
+        .loads(actionRepository.countAction(ActionType.LOADED.name(), idVideo))
+        .views(actionRepository.countAction(ActionType.VIEWED.name(), idVideo)).build();
+
+    return statistic;
   }
 
 }

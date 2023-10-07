@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
+import com.acarreno.poc.video.streaming.model.StatisticDTO;
 import com.acarreno.poc.video.streaming.model.StatusVideoType;
 
 public interface VideoStreamingService {
@@ -24,5 +25,7 @@ public interface VideoStreamingService {
   ResponseDTO updateMetadata(MetadataDTO metadata);
 
   ResponseDTO saveAction(ActionDTO action);
+
+  StatisticDTO getStatisticByVideo(UUID idVideo);
 
 }
