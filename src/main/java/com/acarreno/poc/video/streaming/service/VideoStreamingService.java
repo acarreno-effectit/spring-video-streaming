@@ -9,10 +9,13 @@ import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
 import com.acarreno.poc.video.streaming.model.StatisticDTO;
 import com.acarreno.poc.video.streaming.model.StatusVideoType;
+import com.acarreno.poc.video.streaming.model.VideoDTO;
 
 public interface VideoStreamingService {
 
   ResponseDTO loadVideo(Resource resource) throws IOException;
+
+  VideoDTO getVideoByID(UUID idVideo);
 
   LinkedList<MetadataDTO> getVideosInfo();
 

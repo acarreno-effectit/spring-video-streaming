@@ -13,6 +13,7 @@ import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
 import com.acarreno.poc.video.streaming.model.StatisticDTO;
 import com.acarreno.poc.video.streaming.model.StatusVideoType;
+import com.acarreno.poc.video.streaming.model.VideoDTO;
 import com.acarreno.poc.video.streaming.persistence.ActionRepository;
 import com.acarreno.poc.video.streaming.persistence.MetadataRepository;
 import com.acarreno.poc.video.streaming.persistence.ParticipantRepository;
@@ -44,6 +45,19 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
     entity = videoRepository.save(entity);
 
     return ResponseDTO.builder().id(entity.getIdVideo().toString()).build();
+  }
+
+  @Override
+  public VideoDTO getVideoByID(UUID idVideo) {
+
+    Optional<VideoEntity> response = videoRepository.findByIdVideo(idVideo);
+
+    if (response.isEmpty()) {
+      throw new ELException("Invalid idVideo");
+    }
+
+    return VideoDTO.builder().filename(response.get().getFilename())
+        .content(response.get().getContent()).build();
   }
 
   @Override
@@ -119,7 +133,7 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
     metadata.setIdVideo(response.get().getVideo().getIdVideo());
     MetadataEntity entity = metadataRepository.save(mapper.metadataDTOToMetadataEntity(metadata));
 
-    if (!metadata.getParticipants().isEmpty()) {
+    if (metadata.getParticipants() != null && !metadata.getParticipants().isEmpty()) {
       metadata.getParticipants().forEach(item -> participantRepository.save(participantRepository
           .save(mapper.participantDTOToParticipantEntity(item, entity.getVideo().getIdVideo()))));
     }
