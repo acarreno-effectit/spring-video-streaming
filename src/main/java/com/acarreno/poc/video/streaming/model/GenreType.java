@@ -1,0 +1,30 @@
+package com.acarreno.poc.video.streaming.model;
+
+public enum GenreType {
+  ACTION,
+  ADVENTURE,
+  ANIMATION,
+  BIOGRAPHY,
+  COMEDY,
+  CRIME,
+  DOCUMENTARY,
+  DRAMA,
+  FAMILY,
+  FANTASY,
+  FILM_NOIR,
+  GAME_SHOW,
+  HISTORY,
+  HORROR,
+  MUSIC,
+  MUSICAL,
+  MYSTERY,
+  NEWS,
+  REALITY_TV,
+  ROMANCE,
+  SCI_FI,
+  SPORT,
+  TALK_SHOW,
+  THRILLER,
+  WAR,
+  WESTERN
+}

@@ -2,6 +2,7 @@ package com.acarreno.poc.video.streaming.service.impl;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -56,13 +57,13 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   @Override
   public ResponseDTO changeStatusVideo(UUID idVideo, StatusVideoType statusVideo) {
 
-    LinkedList<VideoEntity> response = videoRepository.findByIdVideo(idVideo);
+    Optional<VideoEntity> response = videoRepository.findByIdVideo(idVideo);
 
     if (response.isEmpty()) {
       throw new ELException("Invalid idVideo");
     }
 
-    VideoEntity entity = response.get(0);
+    VideoEntity entity = response.get();
     entity.setStatus(statusVideo.name());
     videoRepository.save(entity);
 
@@ -86,13 +87,13 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   @Transactional
   public MetadataDTO getMetadataByIdVideo(UUID idVideo) {
 
-    LinkedList<MetadataEntity> response = metadataRepository.findByVideoIdVideo(idVideo);
+    Optional<MetadataEntity> response = metadataRepository.findByVideoIdVideo(idVideo);
 
     if (response.isEmpty()) {
       throw new ELException("Invalid idVideo");
     }
 
-    MetadataDTO metadata = mapper.metadataEntityToMetadataDTO(response.get(0));
+    MetadataDTO metadata = mapper.metadataEntityToMetadataDTO(response.get());
 
     LinkedList<ParticipantEntity> participantResponse =
         participantRepository.findByVideoIdVideo(idVideo);
@@ -108,14 +109,14 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   @Transactional
   public ResponseDTO updateMetadata(MetadataDTO metadata) {
 
-    LinkedList<MetadataEntity> response =
+    Optional<MetadataEntity> response =
         metadataRepository.findByIdMetadata(metadata.getIdMetadata());
 
     if (response.isEmpty()) {
       throw new ELException("Invalid idMetadata");
     }
 
-    metadata.setIdVideo(response.get(0).getVideo().getIdVideo());
+    metadata.setIdVideo(response.get().getVideo().getIdVideo());
     MetadataEntity entity = metadataRepository.save(mapper.metadataDTOToMetadataEntity(metadata));
 
     if (!metadata.getParticipants().isEmpty()) {
