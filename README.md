@@ -17,5 +17,13 @@
   ```
   - Run application using command line interface:
   ```
-  
+  mvn spring-boot:run
   ```
+  >NOTE: It's required to have MAVEN cli installed as a *Environment Variable*
+  
+
+### 3. API Documentation:
+- Swagger API documentation can be located in the URL:
+http://localhost:8080/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
+- Postman API Documentation:
+https://documenter.getpostman.com/view/1764904/2s9YJgTLRv
