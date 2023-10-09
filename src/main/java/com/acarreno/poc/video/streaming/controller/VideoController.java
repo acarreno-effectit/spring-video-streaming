@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
 import com.acarreno.poc.video.streaming.model.StatusVideoType;
@@ -37,12 +38,12 @@ public class VideoController {
 
   @Operation(summary = "Load Video", description = "API to load Video", tags = {"video"})
   @ApiResponses({@ApiResponse(responseCode = "201", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ResponseDTO> load(@RequestParam MultipartFile video) throws IOException {
+  public ResponseEntity<ResponseDTO> load(@RequestParam MultipartFile video)
+      throws CustomException {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(videoStreamingService.loadVideo(video.getResource()));
   }
@@ -50,12 +51,11 @@ public class VideoController {
   @Operation(summary = "Change Status Video", description = "API to Change Status Video",
       tags = {"video"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @PatchMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ResponseDTO> statusVideo(@RequestParam(name = "idVideo") UUID idVideo,
-      @RequestParam(name = "status") StatusVideoType status) throws IOException {
+      @RequestParam(name = "status") StatusVideoType status) throws CustomException {
     return ResponseEntity.status(HttpStatus.OK)
         .body(videoStreamingService.changeStatusVideo(idVideo, status));
   }
@@ -64,7 +64,6 @@ public class VideoController {
   @Operation(summary = "Get Basic Videos Info", description = "API to get Basic Videos Info",
       tags = {"video"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -74,11 +73,11 @@ public class VideoController {
 
   @Operation(summary = "Get Video By ID", description = "API to get Video By ID", tags = {"video"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @GetMapping(value = "{idVideo}", produces = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<VideoDTO> getVideoById(@PathVariable UUID idVideo) throws IOException {
+  public ResponseEntity<VideoDTO> getVideoById(@PathVariable UUID idVideo)
+      throws IOException, CustomException {
     return ResponseEntity.status(HttpStatus.OK).body(videoStreamingService.getVideoByID(idVideo));
   }
 

@@ -32,7 +32,6 @@ public class ActionController {
 
   @Operation(summary = "Save Action", description = "API to save Action", tags = {"action"})
   @ApiResponses({@ApiResponse(responseCode = "201", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -44,7 +43,6 @@ public class ActionController {
   @Operation(summary = "Get Statistic By Id Video",
       description = "API to get Statistic By Id Video", tags = {"action"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @GetMapping(value = "/{idVideo}", produces = {MediaType.APPLICATION_JSON_VALUE})

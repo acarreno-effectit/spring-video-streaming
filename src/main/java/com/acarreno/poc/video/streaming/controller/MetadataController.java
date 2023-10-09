@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
 import com.acarreno.poc.video.streaming.service.VideoStreamingService;
@@ -32,7 +33,6 @@ public class MetadataController {
 
   @Operation(summary = "Save Metadata", description = "API to save Metadata", tags = {"metadata"})
   @ApiResponses({@ApiResponse(responseCode = "201", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -44,12 +44,12 @@ public class MetadataController {
 
   @Operation(summary = "Update Metadata", description = "API to save Metadata", tags = {"metadata"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE},
       produces = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ResponseDTO> update(@RequestBody MetadataDTO metadata) {
+  public ResponseEntity<ResponseDTO> update(@RequestBody MetadataDTO metadata)
+      throws CustomException {
     return ResponseEntity.status(HttpStatus.OK)
         .body(videoStreamingService.updateMetadata(metadata));
   }
@@ -57,11 +57,10 @@ public class MetadataController {
   @Operation(summary = "Get Metadata By ID Video", description = "API to get Metadata By ID Video",
       tags = {"metadata"})
   @ApiResponses({@ApiResponse(responseCode = "200", content = {@Content(schema = @Schema())}),
-      @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}),
       @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
   @GetMapping(value = "/{idVideo}", produces = {MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<MetadataDTO> get(@PathVariable UUID idVideo) {
+  public ResponseEntity<MetadataDTO> get(@PathVariable UUID idVideo) throws CustomException {
     return ResponseEntity.status(HttpStatus.OK)
         .body(videoStreamingService.getMetadataByIdVideo(idVideo));
   }

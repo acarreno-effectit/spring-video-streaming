@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.ActionType;
 import com.acarreno.poc.video.streaming.model.GenreType;
@@ -32,7 +32,6 @@ import com.acarreno.poc.video.streaming.persistence.entity.ActionEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.MetadataEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.VideoEntity;
 import com.acarreno.poc.video.streaming.service.impl.VideoStreamingServiceImpl;
-import jakarta.el.ELException;
 
 @SpringBootTest
 public class VideoStreamingServiceTest {
@@ -53,7 +52,7 @@ public class VideoStreamingServiceTest {
   private VideoStreamingServiceImpl service;
 
   @Test
-  public void loadVideoSuccessful() throws IOException {
+  public void loadVideoSuccessful() throws CustomException {
 
     VideoEntity entity = VideoEntity.builder().idVideo(UUID.randomUUID()).build();
     when(videoRepository.save(Mockito.any(VideoEntity.class))).thenReturn(entity);
@@ -62,7 +61,7 @@ public class VideoStreamingServiceTest {
   }
 
   @Test
-  public void getVideoByIDSuccessful() {
+  public void getVideoByIDSuccessful() throws CustomException {
     VideoEntity entity =
         VideoEntity.builder().filename("filename.mp4").content("MyVideo".getBytes()).build();
 
@@ -73,8 +72,7 @@ public class VideoStreamingServiceTest {
 
   @Test
   public void getVideoByIDELException() {
-
-    ELException thrown = Assertions.assertThrows(ELException.class, () -> {
+    CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
       when(videoRepository.findByIdVideo(Mockito.any(UUID.class))).thenReturn(Optional.empty());
       service.getVideoByID(mock(UUID.class));
     });
@@ -105,7 +103,7 @@ public class VideoStreamingServiceTest {
   }
 
   @Test
-  public void changeStatusVideoSuccessful() {
+  public void changeStatusVideoSuccessful() throws CustomException {
     VideoEntity entity = VideoEntity.builder().idVideo(UUID.randomUUID()).filename("filename.mp4")
         .content("MyVideo".getBytes()).build();
 
@@ -116,7 +114,7 @@ public class VideoStreamingServiceTest {
 
   @Test
   public void changeStatusVideoNotFoundVideo() {
-    ELException thrown = Assertions.assertThrows(ELException.class, () -> {
+    CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
       when(videoRepository.findByIdVideo(Mockito.any(UUID.class))).thenReturn(Optional.empty());
       service.changeStatusVideo(mock(UUID.class), StatusVideoType.ACTIVED);
     });
@@ -140,7 +138,7 @@ public class VideoStreamingServiceTest {
   }
 
   @Test
-  public void getMetadataByIdVideoSuccessful() {
+  public void getMetadataByIdVideoSuccessful() throws CustomException {
 
     MetadataEntity entity =
         MetadataEntity.builder().video(VideoEntity.builder().idVideo(UUID.randomUUID()).build())
@@ -157,7 +155,7 @@ public class VideoStreamingServiceTest {
   @Test
   public void getMetadataByIdVideoNotFound() {
 
-    ELException thrown = Assertions.assertThrows(ELException.class, () -> {
+    CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
       when(metadataRepository.findByVideoIdVideo(Mockito.any(UUID.class)))
           .thenReturn(Optional.empty());
       service.getMetadataByIdVideo(mock(UUID.class));
@@ -167,7 +165,7 @@ public class VideoStreamingServiceTest {
   }
 
   @Test
-  public void updateMetadataSuccessful() {
+  public void updateMetadataSuccessful() throws CustomException {
     MetadataEntity entity =
         MetadataEntity.builder().video(VideoEntity.builder().idVideo(UUID.randomUUID()).build())
             .idMetadata(UUID.randomUUID()).genre(GenreType.ACTION.name()).runningTime("2h 30m")
@@ -185,7 +183,7 @@ public class VideoStreamingServiceTest {
   @Test
   public void updateMetadataNotFound() {
 
-    ELException thrown = Assertions.assertThrows(ELException.class, () -> {
+    CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
       when(metadataRepository.findByIdMetadata(Mockito.any(UUID.class)))
           .thenReturn(Optional.empty());
       service.updateMetadata(mock(MetadataDTO.class));

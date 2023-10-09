@@ -1,9 +1,9 @@
 package com.acarreno.poc.video.streaming.service;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.UUID;
 import org.springframework.core.io.Resource;
+import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ResponseDTO;
@@ -13,19 +13,19 @@ import com.acarreno.poc.video.streaming.model.VideoDTO;
 
 public interface VideoStreamingService {
 
-  ResponseDTO loadVideo(Resource resource) throws IOException;
+  ResponseDTO loadVideo(Resource resource) throws CustomException;
 
-  VideoDTO getVideoByID(UUID idVideo);
+  VideoDTO getVideoByID(UUID idVideo) throws CustomException;
 
   LinkedList<MetadataDTO> getVideosInfo();
 
-  ResponseDTO changeStatusVideo(UUID idVideo, StatusVideoType statusVideo);
+  ResponseDTO changeStatusVideo(UUID idVideo, StatusVideoType statusVideo) throws CustomException;
 
   ResponseDTO saveMetadata(MetadataDTO metadata);
 
-  MetadataDTO getMetadataByIdVideo(UUID idVideo);
+  MetadataDTO getMetadataByIdVideo(UUID idVideo) throws CustomException;
 
-  ResponseDTO updateMetadata(MetadataDTO metadata);
+  ResponseDTO updateMetadata(MetadataDTO metadata) throws CustomException;
 
   ResponseDTO saveAction(ActionDTO action);
 

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.mapper.VideoStreamingMapper;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.ActionType;
@@ -23,7 +24,6 @@ import com.acarreno.poc.video.streaming.persistence.entity.MetadataEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.ParticipantEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.VideoEntity;
 import com.acarreno.poc.video.streaming.service.VideoStreamingService;
-import jakarta.el.ELException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -38,22 +38,27 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   private VideoStreamingMapper mapper = VideoStreamingMapper.INSTANCE;
 
   @Override
-  public ResponseDTO loadVideo(Resource resource) throws IOException {
+  public ResponseDTO loadVideo(Resource resource) throws CustomException {
 
-    VideoEntity entity = mapper.resourceToVideoEntity(resource, resource.getContentAsByteArray(),
-        resource.contentLength(), StatusVideoType.LOADED.name());
+    VideoEntity entity;
+    try {
+      entity = mapper.resourceToVideoEntity(resource, resource.getContentAsByteArray(),
+          resource.contentLength(), StatusVideoType.LOADED.name());
+    } catch (IOException e) {
+      throw new CustomException(e.getMessage(), "Error loading information video");
+    }
+
     entity = videoRepository.save(entity);
-
     return ResponseDTO.builder().id(entity.getIdVideo().toString()).build();
   }
 
   @Override
-  public VideoDTO getVideoByID(UUID idVideo) {
+  public VideoDTO getVideoByID(UUID idVideo) throws CustomException {
 
     Optional<VideoEntity> response = videoRepository.findByIdVideo(idVideo);
 
     if (response.isEmpty()) {
-      throw new ELException("Invalid idVideo");
+      throw new CustomException("Invalid idVideo", "ID Video is not found in the Database");
     }
 
     return VideoDTO.builder().filename(response.get().getFilename())
@@ -69,12 +74,13 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   }
 
   @Override
-  public ResponseDTO changeStatusVideo(UUID idVideo, StatusVideoType statusVideo) {
+  public ResponseDTO changeStatusVideo(UUID idVideo, StatusVideoType statusVideo)
+      throws CustomException {
 
     Optional<VideoEntity> response = videoRepository.findByIdVideo(idVideo);
 
     if (response.isEmpty()) {
-      throw new ELException("Invalid idVideo");
+      throw new CustomException("Invalid idVideo", "ID Video is not found in the Database");
     }
 
     VideoEntity entity = response.get();
@@ -99,12 +105,12 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
 
   @Override
   @Transactional
-  public MetadataDTO getMetadataByIdVideo(UUID idVideo) {
+  public MetadataDTO getMetadataByIdVideo(UUID idVideo) throws CustomException {
 
     Optional<MetadataEntity> response = metadataRepository.findByVideoIdVideo(idVideo);
 
     if (response.isEmpty()) {
-      throw new ELException("Invalid idVideo");
+      throw new CustomException("Invalid idVideo", "ID Video is not found in the Database");
     }
 
     MetadataDTO metadata = mapper.metadataEntityToMetadataDTO(response.get());
@@ -121,13 +127,13 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
 
   @Override
   @Transactional
-  public ResponseDTO updateMetadata(MetadataDTO metadata) {
+  public ResponseDTO updateMetadata(MetadataDTO metadata) throws CustomException {
 
     Optional<MetadataEntity> response =
         metadataRepository.findByIdMetadata(metadata.getIdMetadata());
 
     if (response.isEmpty()) {
-      throw new ELException("Invalid idMetadata");
+      throw new CustomException("Invalid idMetadata", "ID Metadata is not found in the Database");
     }
 
     metadata.setIdVideo(response.get().getVideo().getIdVideo());
