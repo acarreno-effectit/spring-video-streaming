@@ -4,16 +4,23 @@ spring:
   application:
     name: spring-video-streaming
   datasource:
-    username: admin
-    url: jdbc:postgresql://localhost:5432/test_project
-    password: Test123*
+    username: ${spring.video.streaming.datasource.username}
+    url: ${spring.video.streaming.datasource.url}
+    password: ${spring.video.streaming.datasource.password}
     driverClassName: org.postgresql.Driver
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: none
+    open-in-view: false
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      label: latest
+      profile: local
+      uri: http://localhost:8763
+      username: admin
+      password: password
   servlet:
     multipart:
       enabled: true
@@ -23,7 +30,11 @@ logging:
   level:
     com:
       acarreno:
-        poc: DEBUG
+        poc: ${spring.video.streaming.logging.level}
     org:
       springframework:
-        ws: DEBUG
+        ws: ${org.springframework.ws.logging.level}
+cloudinary:
+  name: ${spring.video.streaming.cloudinary.name}
+  api_key: ${spring.video.streaming.cloudinary.api_key}
+  api_secret: ${spring.video.streaming.cloudinary.api_secret}
