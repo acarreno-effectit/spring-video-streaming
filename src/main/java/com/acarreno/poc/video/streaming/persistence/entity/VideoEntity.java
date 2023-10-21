@@ -36,7 +36,7 @@ public class VideoEntity {
   private String filename;
 
   @Column(name = "content", nullable = true, unique = false)
-  private byte[] content;
+  private String content;
 
   @Column(name = "size_in_bytes", nullable = true, unique = false)
   private long sizeInBytes;

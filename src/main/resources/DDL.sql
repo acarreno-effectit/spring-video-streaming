@@ -1,10 +1,11 @@
 CREATE DATABASE test_project;
+---
 CREATE SCHEMA IF NOT EXISTS streaming;
 ---
 CREATE TABLE streaming.video(
     id_video UUID NOT NULL,
     filename VARCHAR(100) NOT NULL,
-    content bytea NOT NULL,
+    content TEXT NOT NULL,
     size_in_bytes INTEGER NOT NULL,
     status VARCHAR(100) NOT NULL,
     created_date TIMESTAMP NOT NULL,

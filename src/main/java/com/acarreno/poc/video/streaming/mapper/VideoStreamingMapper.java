@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
-import org.springframework.core.io.Resource;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
 import com.acarreno.poc.video.streaming.model.ParticipantDTO;
@@ -21,11 +20,11 @@ public interface VideoStreamingMapper {
   VideoStreamingMapper INSTANCE = Mappers.getMapper(VideoStreamingMapper.class);
 
   @Mapping(target = "status", source = "status")
-  @Mapping(target = "filename", source = "resource.filename")
-  @Mapping(target = "content", source = "contentAsByteArray")
+  @Mapping(target = "filename", source = "filename")
+  @Mapping(target = "content", source = "content")
   @Mapping(target = "sizeInBytes", source = "contentLength")
-  VideoEntity resourceToVideoEntity(Resource resource, byte[] contentAsByteArray,
-      long contentLength, String status);
+  VideoEntity resourceToVideoEntity(String filename, String content, long contentLength,
+      String status);
 
   @Mapping(target = "video.idVideo", source = "dto.idVideo")
   MetadataEntity metadataDTOToMetadataEntity(MetadataDTO dto);

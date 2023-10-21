@@ -2,7 +2,6 @@ package com.acarreno.poc.video.streaming.service;
 
 import java.util.LinkedList;
 import java.util.UUID;
-import org.springframework.core.io.Resource;
 import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.MetadataDTO;
@@ -13,7 +12,7 @@ import com.acarreno.poc.video.streaming.model.VideoDTO;
 
 public interface VideoStreamingService {
 
-  ResponseDTO loadVideo(Resource resource) throws CustomException;
+  ResponseDTO loadVideo(String fileName, byte[] content) throws CustomException;
 
   VideoDTO getVideoByID(UUID idVideo) throws CustomException;
 

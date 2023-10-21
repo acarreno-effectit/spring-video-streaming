@@ -27,7 +27,7 @@ public class VideoRepositoryTest {
   
   @BeforeEach
   void setUp() {
-    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video".getBytes())
+    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video")
         .status(StatusVideoType.LOADED.name()).build();
 
     entity = entityManager.persist(entity);
@@ -36,7 +36,7 @@ public class VideoRepositoryTest {
 
   @Test
   public void saveParticipantSuccessful() {
-    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video".getBytes())
+    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video")
         .status(StatusVideoType.LOADED.name()).build();
 
     entity = repository.save(entity);

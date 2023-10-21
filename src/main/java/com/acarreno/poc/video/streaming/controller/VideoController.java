@@ -43,9 +43,9 @@ public class VideoController {
   @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ResponseDTO> load(@RequestParam MultipartFile video)
-      throws CustomException {
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(videoStreamingService.loadVideo(video.getResource()));
+      throws CustomException, IOException {
+    return ResponseEntity.status(HttpStatus.CREATED).body(videoStreamingService
+        .loadVideo(video.getResource().getFilename(), video.getResource().getContentAsByteArray()));
   }
 
   @Operation(summary = "Change Status Video", description = "API to Change Status Video",

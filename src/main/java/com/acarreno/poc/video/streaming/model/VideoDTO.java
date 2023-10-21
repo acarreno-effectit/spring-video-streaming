@@ -8,6 +8,6 @@ import lombok.Data;
 public class VideoDTO {
 
   private String filename;
-  private byte[] content;
+  private String content;
 
 }

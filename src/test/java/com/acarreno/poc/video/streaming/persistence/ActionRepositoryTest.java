@@ -30,7 +30,7 @@ public class ActionRepositoryTest {
   @BeforeEach
   void setUp() {
 
-    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video".getBytes())
+    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("video")
         .status(StatusVideoType.LOADED.name()).build();
 
     entity = entityManager.persist(entity);

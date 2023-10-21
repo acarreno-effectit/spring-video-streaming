@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.model.ActionDTO;
 import com.acarreno.poc.video.streaming.model.ActionType;
@@ -32,6 +34,8 @@ import com.acarreno.poc.video.streaming.persistence.entity.ActionEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.MetadataEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.VideoEntity;
 import com.acarreno.poc.video.streaming.service.impl.VideoStreamingServiceImpl;
+import com.cloudinary.Uploader;
+import com.cloudinary.utils.ObjectUtils;
 
 @SpringBootTest
 public class VideoStreamingServiceTest {
@@ -48,22 +52,31 @@ public class VideoStreamingServiceTest {
   @Mock
   private ActionRepository actionRepository;
 
+  @Mock
+  private Uploader uploader;
+
   @InjectMocks
   private VideoStreamingServiceImpl service;
 
   @Test
-  public void loadVideoSuccessful() throws CustomException {
+  public void loadVideoSuccessful() throws CustomException, IOException {
 
     VideoEntity entity = VideoEntity.builder().idVideo(UUID.randomUUID()).build();
+    Map<?, ?> returnMap = ObjectUtils.asMap("secure_url", "https://url-video");
+    File file = new File(System.getProperty("java.io.tmpdir") + "fileName.txt");
+
+    when(uploader.uploadLarge(file,
+        ObjectUtils.asMap("resource_type", "video", "folder", "video_streaming")))
+            .thenReturn(returnMap);
+
     when(videoRepository.save(Mockito.any(VideoEntity.class))).thenReturn(entity);
-    ResponseDTO response = service.loadVideo(mock(Resource.class));
+    ResponseDTO response = service.loadVideo("fileName.txt", "myVideoContent".getBytes());
     assertTrue(response.getId() != null);
   }
 
   @Test
   public void getVideoByIDSuccessful() throws CustomException {
-    VideoEntity entity =
-        VideoEntity.builder().filename("filename.mp4").content("MyVideo".getBytes()).build();
+    VideoEntity entity = VideoEntity.builder().filename("filename.mp4").content("MyVideo").build();
 
     when(videoRepository.findByIdVideo(Mockito.any(UUID.class))).thenReturn(Optional.of(entity));
     VideoDTO response = service.getVideoByID(mock(UUID.class));
@@ -105,7 +118,7 @@ public class VideoStreamingServiceTest {
   @Test
   public void changeStatusVideoSuccessful() throws CustomException {
     VideoEntity entity = VideoEntity.builder().idVideo(UUID.randomUUID()).filename("filename.mp4")
-        .content("MyVideo".getBytes()).build();
+        .content("MyVideo").build();
 
     when(videoRepository.findByIdVideo(Mockito.any(UUID.class))).thenReturn(Optional.of(entity));
     ResponseDTO response = service.changeStatusVideo(mock(UUID.class), StatusVideoType.ACTIVED);

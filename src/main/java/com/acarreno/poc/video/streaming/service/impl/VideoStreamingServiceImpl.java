@@ -1,10 +1,12 @@
 package com.acarreno.poc.video.streaming.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import com.acarreno.poc.video.streaming.exception.CustomException;
 import com.acarreno.poc.video.streaming.mapper.VideoStreamingMapper;
@@ -24,6 +26,8 @@ import com.acarreno.poc.video.streaming.persistence.entity.MetadataEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.ParticipantEntity;
 import com.acarreno.poc.video.streaming.persistence.entity.VideoEntity;
 import com.acarreno.poc.video.streaming.service.VideoStreamingService;
+import com.cloudinary.Uploader;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -35,21 +39,33 @@ public class VideoStreamingServiceImpl implements VideoStreamingService {
   private final MetadataRepository metadataRepository;
   private final ParticipantRepository participantRepository;
   private final ActionRepository actionRepository;
+  private final Uploader uploader;
   private VideoStreamingMapper mapper = VideoStreamingMapper.INSTANCE;
 
   @Override
-  public ResponseDTO loadVideo(Resource resource) throws CustomException {
+  public ResponseDTO loadVideo(String fileName, byte[] content) throws CustomException {
 
-    VideoEntity entity;
-    try {
-      entity = mapper.resourceToVideoEntity(resource, resource.getContentAsByteArray(),
-          resource.contentLength(), StatusVideoType.LOADED.name());
+    File file = new File(System.getProperty("java.io.tmpdir") + fileName);
+
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+
+      fos.write(content);
+
+      Map<?, ?> uploadResult = uploader.uploadLarge(file,
+          ObjectUtils.asMap("resource_type", "video", "folder", "video_streaming"));
+
+      VideoEntity entity = mapper.resourceToVideoEntity(fileName,
+          uploadResult.get("secure_url").toString(), 123456L, StatusVideoType.LOADED.name());
+
+      entity = videoRepository.save(entity);
+      return ResponseDTO.builder().id(entity.getIdVideo().toString()).build();
+
     } catch (IOException e) {
       throw new CustomException(e.getMessage(), "Error loading information video");
+    } finally {
+      file.delete();
     }
 
-    entity = videoRepository.save(entity);
-    return ResponseDTO.builder().id(entity.getIdVideo().toString()).build();
   }
 
   @Override

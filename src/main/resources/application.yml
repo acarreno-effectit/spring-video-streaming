@@ -21,6 +21,9 @@ spring:
       max-request-size: 10MB
 logging:
   level:
+    com:
+      acarreno:
+        poc: DEBUG
     org:
       springframework:
         ws: DEBUG
